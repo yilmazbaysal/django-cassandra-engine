@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+import operator
 import warnings
 
 from django import forms
@@ -12,6 +13,10 @@ from django.utils.deprecation import (
 )
 
 NOT_IMPL_MSG = 'Method not available on Cassandra model fields'
+
+# The values to use for "blank" in SelectFields. Will be appended to the start
+# of most "choices" lists.
+BLANK_CHOICE_DASH = [("", "---------"), ]
 
 
 def value_from_object(self, obj):
@@ -120,8 +125,20 @@ def formfield(self, form_class=None, choices_form_class=None, **kwargs):
                          'error_messages', 'show_hidden_initial'):
                 del kwargs[k]
     defaults.update(kwargs)
+
+    # Decide the form class
     if form_class is None:
-        form_class = forms.CharField
+        if self.__class__.__name__ in ('Boolean',):
+            form_class = forms.BooleanField
+        elif self.__class__.__name__ in ('DateTime',):
+            form_class = forms.DateTimeField
+        elif self.__class__.__name__ in ('Date', ):
+            form_class = forms.DateField
+        elif self.__class__.__name__ in ('Time',):
+            form_class = forms.TimeField
+        else:
+            form_class = forms.CharField
+
     return form_class(**defaults)
 
 
@@ -263,8 +280,17 @@ def deconstruct(self, *args, **kwargs):
     raise NotImplementedError(NOT_IMPL_MSG)
 
 
-def get_choices(self, *args, **kwargs):
-    raise NotImplementedError(NOT_IMPL_MSG)
+def get_choices(self, include_blank=True, blank_choice=BLANK_CHOICE_DASH):
+    """
+    Return choices with a default blank choices included, for use as <select> choices for this field.
+    """
+    choices = list(self.choices)
+    if include_blank:
+        blank_defined = any(choice in ('', None) for choice, _ in self.flatchoices)
+        if not blank_defined:
+            choices = blank_choice + choices
+
+    return choices
 
 
 def set_attributes_from_name(self, *args, **kwargs):

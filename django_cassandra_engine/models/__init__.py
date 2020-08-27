@@ -103,7 +103,7 @@ class DjangoCassandraOptions(options.Options):
         cql_column.help_text = ''
         cql_column.blank = allow_null
         cql_column.null = allow_null
-        cql_column.choices = []
+        cql_column.choices = getattr(cql_column, 'choices', None)
         cql_column.flatchoices = []
         cql_column.validators = []
         cql_column.editable = True
