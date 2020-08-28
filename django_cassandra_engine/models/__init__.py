@@ -848,7 +848,7 @@ class DjangoCassandraModel(
                     pk_field = cls.Meta.get_pk_field
                 except AttributeError:
                     raise RuntimeError(PK_META_MISSING_HELP.format(cls))
-                return cls._primary_keys[pk_field]
+                return cls._primary_keys.get(pk_field, cls._columns[pk_field])
             else:
                 return list(six.itervalues(cls._primary_keys))[0]
         except IndexError:
