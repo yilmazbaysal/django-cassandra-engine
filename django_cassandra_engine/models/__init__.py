@@ -123,7 +123,7 @@ class DjangoCassandraOptions(options.Options):
         cql_column.field = cql_column
         cql_column.model = self.model_inst
         cql_column.name = cql_column.db_field_name
-        cql_column.verbose_name = cql_column.db_field_name
+        cql_column.verbose_name = cql_column.verbose_name or cql_column.db_field_name.replace('_', ' ').title()
         cql_column._verbose_name = cql_column.db_field_name
         cql_column.field.related_query_name = lambda: None
 
