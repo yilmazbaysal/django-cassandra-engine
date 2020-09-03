@@ -4,8 +4,6 @@ from cassandra.cqlengine.columns import *
 
 class Blob(columns.Blob):
 
-    choices = None
-
     def __init__(self, *args, **kwargs):
         self.choices = kwargs.pop('choices', None)
         self.verbose_name = kwargs.pop('verbose_name', None)
@@ -18,8 +16,6 @@ Bytes = Blob
 
 class Inet(columns.Inet):
 
-    choices = None
-
     def __init__(self, *args, **kwargs):
         self.choices = kwargs.pop('choices', None)
         self.verbose_name = kwargs.pop('verbose_name', None)
@@ -28,8 +24,6 @@ class Inet(columns.Inet):
 
 
 class Text(columns.Text):
-
-    choices = None
 
     def __init__(self, *args, **kwargs):
         self.choices = kwargs.pop('choices', None)
