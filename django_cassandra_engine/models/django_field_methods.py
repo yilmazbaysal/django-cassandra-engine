@@ -286,7 +286,7 @@ def get_choices(self, include_blank=True, blank_choice=BLANK_CHOICE_DASH):
     """
     choices = list(self.choices)
     if include_blank:
-        blank_defined = any(choice in ('', None) for choice, _ in self.flatchoices)
+        blank_defined = any(choice in ('', None) for choice, _ in self.flatchoices.items())
         if not blank_defined:
             choices = blank_choice + choices
 
